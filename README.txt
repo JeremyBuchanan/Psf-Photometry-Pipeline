@@ -1,1 +1,1 @@
-This is a pipeline for reducing raw imaging data using point spread function photometry. Data is supplied by the LCOGT
+This is a pipeline for reducing raw imaging data using point spread function photometry
