@@ -603,7 +603,7 @@ def write_csv(name, im_name, bjd, filt, airmass, results):
             ra = sky[i].ra.degree
             dec = sky[i].dec.degree
             f.write(im_name+','+np.str(i)+','+np.str(bjd)+','+np.str(flux)+','+np.str(fluxerr)+','+np.str(mag)+','+np.str(magerr)
-                    +','+filt+','+np.str(x_pos)+','+np.str(y_pos)+','+str(avg_airmass)+','+np.str(ra)+','+np.str(dec)+'\n')
+                    +','+filt+','+np.str(x_pos)+','+np.str(y_pos)+','+str(airmass)+','+np.str(ra)+','+np.str(dec)+'\n')
     f.close()
 
 def write_txt(name, sources, stars_tbl, results, fwhm, t0,t1,t2,t3,t4,t5):
@@ -639,7 +639,7 @@ def write_txt(name, sources, stars_tbl, results, fwhm, t0,t1,t2,t3,t4,t5):
             +'\nTime to get wcs: '+np.str(t_5)+'\nTotal time: '+np.str(t_f)+'\n')
     f.close()
 
-def write_txt_f(name, sources, stars_tbl, fwhm):
+def write_txt_f(name, sources, stars_tbl, fwhm, results):
     '''
     Short text file with diagnostic info about each image set, specifically
     in the event of a failure due to low star counts

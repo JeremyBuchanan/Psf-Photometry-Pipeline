@@ -73,7 +73,7 @@ for i in range(0, nepochs+1):
             print('FAILED!')
             results = []
             p.write_pdf_f(name='../results/'+set_name+'_'+np.str(i)+'.pdf', images=im_data, stars=stars, model=epsf.data, plot_res=plot_residuals)
-            p.write_txt_f(name='../results/'+set_name+'_'+np.str(i)+'_diag.txt', sources=sources, stars_tbl=stars_tbl, fwhm=fwhm)
+            p.write_txt_f(name='../results/'+set_name+'_'+np.str(i)+'_diag.txt', sources=sources, stars_tbl=stars_tbl, fwhm=fwhm, results=results)
         else:
             results, photometry = p.do_photometry(image=image, epsf=epsf, fwhm=fwhm)
             results_tbl, residual_stars, final_stars = p.get_residuals(results=results, photometry=photometry, fwhm=fwhm, image=image)
