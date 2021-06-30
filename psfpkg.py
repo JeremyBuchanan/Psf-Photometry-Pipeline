@@ -1,3 +1,33 @@
+import astropy.io.fits as fits
+import copy as copy
+import matplotlib.pyplot as plt
+import matplotlib
+import numpy as np
+import saphires as saph
+from astropy import units as u
+from astropy.modeling.fitting import LevMarLSQFitter
+from astropy.nddata import NDData, CCDData
+from astropy.stats import gaussian_sigma_to_fwhm, sigma_clipped_stats
+from astropy.table import Table
+from astropy.time import Time
+from astropy.visualization import simple_norm, ZScaleInterval, SqrtStretch, ImageNormalize
+from astropy.wcs import WCS
+from astroquery.astrometry_net import AstrometryNet
+from ccdproc import Combiner
+from matplotlib.backends.backend_pdf import PdfPages
+from photutils import aperture_photometry, CircularAperture, EPSFBuilder, CircularAnnulus
+from photutils.background import MMMBackground
+from photutils.detection import DAOStarFinder, IRAFStarFinder
+from photutils.psf import IterativelySubtractedPSFPhotometry, DAOGroup, extract_stars
+from scipy.optimize import curve_fit
+matplotlib.rcParams.update({'font.size': 12})
+ra = 73.59863195295
+dec = +17.16480415593
+pmra = -2.222
+pmdec = -12.554
+plx  = 6.9628
+epoch = 2016.0
+
 def import_images(im_list, p):
     '''
     A function that imports the data from an image file, following a given
@@ -51,7 +81,9 @@ def find_fwhm(image, size=100):
     '''
     mean_val, median_val, std_val = sigma_clipped_stats(image, sigma=2.0)
     max_peak = np.max(image)
+    count = 0
     while max_peak >= 0:
+        count += 1
         if max_peak < 50000:
             r, c = np.where(image==max_peak)[0][0], np.where(image==max_peak)[1][0]
             star = image[r-size:r+size,c-size:c+size]
@@ -70,9 +102,13 @@ def find_fwhm(image, size=100):
             if fwhm > 2:
                 break
         else:
+            r, c = np.where(image==max_peak)[0][0], np.where(image==max_peak)[1][0]
             image[r-size:r+size,c-size:c+size] = 0
             max_peak = np.max(image)
-
+        '''if count > 100:
+            fwhm = 0
+            im_sig = 0
+            break'''
     return fwhm, im_sig
 
 def find_stars(image, sigma, peak=100000):
@@ -102,7 +138,8 @@ def find_stars(image, sigma, peak=100000):
     sigma_psf = sigma
     mean_val, median_val, std_val = sigma_clipped_stats(image, sigma=2.0)
     bkg = median_val
-    daofind = DAOStarFinder(fwhm=sigma_psf*gaussian_sigma_to_fwhm, threshold=bkg+10*std_val, sky=bkg, peakmax=peak, exclude_border=True)
+    daofind = DAOStarFinder(fwhm=sigma_psf*gaussian_sigma_to_fwhm, threshold=bkg+10*std_val,
+                            sky=bkg, peakmax=peak, exclude_border=True)
     stars = daofind(image)
     return stars
 
@@ -588,7 +625,7 @@ def write_pdf_f(name, images, stars, model, plot_res):
         plt.close()
     pp.close()
 
-def write_csv(name, im_name, bjd, filt, airmass, results):
+def write_csv(name, im_name, bjd, filt, airmass, results, sky):
     f = open(name, 'w')
     f.write('NAME, ID, BJD, FLUX, FLUX ERROR, MAG, MAG ERROR, FILTER, X POSITION, Y POSITION, AIRMASS, RA, DEC\n')
     for i in range(sky.size):
@@ -603,7 +640,7 @@ def write_csv(name, im_name, bjd, filt, airmass, results):
             ra = sky[i].ra.degree
             dec = sky[i].dec.degree
             f.write(im_name+','+np.str(i)+','+np.str(bjd)+','+np.str(flux)+','+np.str(fluxerr)+','+np.str(mag)+','+np.str(magerr)
-                    +','+filt+','+np.str(x_pos)+','+np.str(y_pos)+','+str(avg_airmass)+','+np.str(ra)+','+np.str(dec)+'\n')
+                    +','+filt+','+np.str(x_pos)+','+np.str(y_pos)+','+str(airmass)+','+np.str(ra)+','+np.str(dec)+'\n')
     f.close()
 
 def write_txt(name, sources, stars_tbl, results, fwhm, t0,t1,t2,t3,t4,t5):
@@ -639,7 +676,7 @@ def write_txt(name, sources, stars_tbl, results, fwhm, t0,t1,t2,t3,t4,t5):
             +'\nTime to get wcs: '+np.str(t_5)+'\nTotal time: '+np.str(t_f)+'\n')
     f.close()
 
-def write_txt_f(name, sources, stars_tbl, fwhm):
+def write_txt_f(name, sources, stars_tbl, fwhm, results):
     '''
     Short text file with diagnostic info about each image set, specifically
     in the event of a failure due to low star counts
