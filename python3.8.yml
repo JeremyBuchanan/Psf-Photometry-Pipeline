@@ -1,0 +1,4 @@
+name: python3.8
+dependencies:
+  - python=3.8
+  - astropy=4.2.1

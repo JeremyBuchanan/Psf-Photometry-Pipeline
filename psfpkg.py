@@ -439,7 +439,7 @@ def do_photometry(image, epsf, fwhm):
     daofind = DAOStarFinder(fwhm=fwhm, threshold=median_val+20*std_val, sky=median_val, peakmax=100000, exclude_border=True)
     daogroup = DAOGroup(2*fwhm)
     mmm_bkg = MMMBackground()
-    fitter = LevMarLSQFitter()
+    fitter = LevMarLSQFitter(calc_uncertainties=True)
     def round_to_odd(f):
         return np.ceil(f) // 2 * 2 + 1
     size = 5*fwhm
@@ -506,7 +506,8 @@ def get_wcs(results_tbl):
     ast.api_key = 'elamxvaiboqqjucf'
     image_width = 4096
     image_height = 4096
-    wcs_header = ast.solve_from_source_list(results_tbl['x'][:30], results_tbl['y'][:30], image_width, image_height, solve_timeout=600)
+    wcs_header = ast.solve_from_source_list(results_tbl['x'][:30], results_tbl['y'][:30],
+                                            image_width, image_height, solve_timeout=600)
     w = WCS(wcs_header)
     sky = w.pixel_to_world(results_tbl['x'], results_tbl['y'])
 

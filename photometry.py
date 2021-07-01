@@ -13,10 +13,10 @@ matplotlib.rcParams.update({'font.size': 12})
 filenames, epochid = np.loadtxt('../Epochs_V.csv', unpack=True, delimiter=',', usecols=(0,1), dtype='U100,f')
 nepochs = np.int(np.max(epochid))
 plot_residuals = input('Plot residuals? [y/n] ')
-for i in range(40, nepochs+1):
+for i in range(79, nepochs+1):
     t0 = t.perf_counter()
     images = filenames[(epochid == i)]
-    x = np.str(images[0])
+    x = str(images[0])
     set_name = x[:22]
     path = '../fits/'
     im_data, headers = p.import_images(im_list=images, p=path)
@@ -54,7 +54,8 @@ for i in range(40, nepochs+1):
             results = []
             p.write_pdf_f(name='../results/'+set_name+'_'+np.str(i)+'.pdf', images=im_data, stars=stars,
                             model=epsf.data, plot_res=plot_residuals)
-            p.write_txt_f(name='../results/'+set_name+'_'+np.str(i)+'_diag.txt', sources=sources, stars_tbl=stars_tbl, fwhm=fwhm, results=results)
+            p.write_txt_f(name='../results/'+set_name+'_'+np.str(i)+'_diag.txt', sources=sources,
+                            stars_tbl=stars_tbl, fwhm=fwhm, results=results)
         else:
             results, photometry = p.do_photometry(image=image, epsf=epsf, fwhm=fwhm)
             results_tbl, residual_stars, final_stars = p.get_residuals(results=results, photometry=photometry, fwhm=fwhm, image=image)
