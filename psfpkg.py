@@ -105,10 +105,10 @@ def find_fwhm(image, size=100):
             r, c = np.where(image==max_peak)[0][0], np.where(image==max_peak)[1][0]
             image[r-size:r+size,c-size:c+size] = 0
             max_peak = np.max(image)
-        '''if count > 100:
+        if count > 100:
             fwhm = 0
             im_sig = 0
-            break'''
+            break
     return fwhm, im_sig
 
 def find_stars(image, sigma, peak=100000):
