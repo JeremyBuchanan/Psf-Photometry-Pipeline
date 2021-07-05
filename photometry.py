@@ -13,7 +13,7 @@ matplotlib.rcParams.update({'font.size': 12})
 filenames, epochid = np.loadtxt('../Epochs_V.csv', unpack=True, delimiter=',', usecols=(0,1), dtype='U100,f')
 nepochs = np.int(np.max(epochid))
 plot_residuals = input('Plot residuals? [y/n] ')
-for i in range(92,93):#, nepochs+1):
+for i in range(10,11):#, nepochs+1):
     t0 = t.perf_counter()
     images = filenames[(epochid == i)]
     x = str(images[0])
