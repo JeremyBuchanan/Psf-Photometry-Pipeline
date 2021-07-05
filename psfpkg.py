@@ -101,6 +101,9 @@ def find_fwhm(image, size=100):
             fwhm = im_sig*gaussian_sigma_to_fwhm
             if fwhm > 2:
                 break
+            else:
+                image[r-size:r+size,c-size:c+size] = 0
+                max_peak = np.max(image)
         else:
             r, c = np.where(image==max_peak)[0][0], np.where(image==max_peak)[1][0]
             image[r-size:r+size,c-size:c+size] = 0
