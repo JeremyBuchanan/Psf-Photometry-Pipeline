@@ -72,7 +72,8 @@ for i in range(10,11):#, nepochs+1):
                                 stars_tbl=stars_tbl, fwhm=fwhm, results=results)
             else:
                 results, photometry = p.do_photometry(image=image, epsf=epsf, fwhm=fwhm)
-                results_tbl, residual_stars, final_stars = p.get_residuals(results=results, photometry=photometry, fwhm=fwhm, image=image)
+                results_tbl, residual_stars, final_stars = p.get_residuals(results=results, photometry=photometry,
+                                                                            fwhm=fwhm, image=image)
                 results.sort('flux_fit', reverse=True)
                 t4 = t.perf_counter()
                 sky, wcs_header = p.get_wcs(results_tbl=results_tbl)
