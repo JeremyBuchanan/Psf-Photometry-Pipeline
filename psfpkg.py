@@ -21,11 +21,11 @@ from photutils.detection import DAOStarFinder, IRAFStarFinder
 from photutils.psf import IterativelySubtractedPSFPhotometry, DAOGroup, extract_stars
 from scipy.optimize import curve_fit
 matplotlib.rcParams.update({'font.size': 12})
-ra = 73.59863195295
-dec = +17.16480415593
-pmra = -2.222
-pmdec = -12.554
-plx  = 6.9628
+ra = 186.76734489069
+dec = -72.45185158542
+pmra = -40.294
+pmdec = -10.808
+plx  = 9.9046
 epoch = 2016.0
 
 def import_images(im_list, p):
@@ -52,7 +52,8 @@ def import_images(im_list, p):
     im_data = []
     im_headers = []
     for i in im_list:
-        path = p + i
+        x = str(i)
+        path = p + x
         hdu = fits.open(path)
         data = hdu[1].data
         header = hdu[1].header
@@ -80,12 +81,15 @@ def find_fwhm(image, size=100):
             x0, y0, sig_x, sig_y, Amplitude, offset (background estimate)
     '''
     mean_val, median_val, std_val = sigma_clipped_stats(image, sigma=2.0)
-    max_peak = np.max(image)
+    search_image = image[100:-100,100:-100]
+    max_peak = np.max(search_image)
     count = 0
     while max_peak >= 0:
         count += 1
+        rs, cs = np.where(search_image==max_peak)[0][0], np.where(search_image==max_peak)[1][0]
+        r = rs+100
+        c = cs+100
         if max_peak < 50000:
-            r, c = np.where(image==max_peak)[0][0], np.where(image==max_peak)[1][0]
             star = image[r-size:r+size,c-size:c+size]
             x = np.arange(2*size)
             y = np.arange(2*size)
@@ -103,12 +107,17 @@ def find_fwhm(image, size=100):
                 break
             else:
                 image[r-size:r+size,c-size:c+size] = 0
-                max_peak = np.max(image)
+                search_image = image[100:-100,100:-100]
+                max_peak = np.max(search_image)
         else:
-            r, c = np.where(image==max_peak)[0][0], np.where(image==max_peak)[1][0]
             image[r-size:r+size,c-size:c+size] = 0
-            max_peak = np.max(image)
+            search_image = image[100:-100,100:-100]
+            max_peak = np.max(search_image)
         if count > 100:
+            fwhm = 0
+            im_sig = 0
+            break
+        if max_peak < 1000:
             fwhm = 0
             im_sig = 0
             break
