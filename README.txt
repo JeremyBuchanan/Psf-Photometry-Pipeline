@@ -1,1 +1,0 @@
-This is a pipeline for reducing raw imaging data using point spread function photometry

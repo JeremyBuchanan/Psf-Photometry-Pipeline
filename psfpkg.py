@@ -81,12 +81,15 @@ def find_fwhm(image, size=100):
             x0, y0, sig_x, sig_y, Amplitude, offset (background estimate)
     '''
     mean_val, median_val, std_val = sigma_clipped_stats(image, sigma=2.0)
-    max_peak = np.max(image)
+    search_image = image[100:-100,100:-100]
+    max_peak = np.max(search_image)
     count = 0
     while max_peak >= 0:
         count += 1
-        if max_peak < 20000:
-            r, c = np.where(image==max_peak)[0][0], np.where(image==max_peak)[1][0]
+        rs, cs = np.where(search_image==max_peak)[0][0], np.where(search_image==max_peak)[1][0]
+        r = rs+100
+        c = cs+100
+        if max_peak < 50000:
             star = image[r-size:r+size,c-size:c+size]
             x = np.arange(2*size)
             y = np.arange(2*size)
@@ -102,11 +105,19 @@ def find_fwhm(image, size=100):
             fwhm = im_sig*gaussian_sigma_to_fwhm
             if fwhm > 2:
                 break
+            else:
+                image[r-size:r+size,c-size:c+size] = 0
+                search_image = image[100:-100,100:-100]
+                max_peak = np.max(search_image)
         else:
-            r, c = np.where(image==max_peak)[0][0], np.where(image==max_peak)[1][0]
             image[r-size:r+size,c-size:c+size] = 0
-            max_peak = np.max(image)
-        if count > 10000:
+            search_image = image[100:-100,100:-100]
+            max_peak = np.max(search_image)
+        if count > 100:
+            fwhm = 0
+            im_sig = 0
+            break
+        if max_peak < 1000:
             fwhm = 0
             im_sig = 0
             break
