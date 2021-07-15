@@ -3,6 +3,7 @@ import copy as copy
 import matplotlib.pyplot as plt
 import matplotlib
 import numpy as np
+import obj_data as od
 import saphires as saph
 from astropy import units as u
 from astropy.modeling.fitting import LevMarLSQFitter
@@ -21,12 +22,12 @@ from photutils.detection import DAOStarFinder, IRAFStarFinder
 from photutils.psf import IterativelySubtractedPSFPhotometry, DAOGroup, extract_stars
 from scipy.optimize import curve_fit
 matplotlib.rcParams.update({'font.size': 12})
-ra = 186.76734489069
-dec = -72.45185158542
-pmra = -40.294
-pmdec = -10.808
-plx  = 9.9046
-epoch = 2016.0
+ra = od.ra
+dec = od.dec
+pmra = od.pmra
+pmdec = od.pmdec
+plx  = od.plx
+epoch = od.epoch
 
 def import_images(im_list, p):
     '''
@@ -186,7 +187,6 @@ def calculate_shift(stars1, stars2):
 
     return diff
 
-
 def roll_image(image, diff, threshold=0.5):
     '''
     Averages the x and y offset of objects on 2 images to the nearest
@@ -222,7 +222,6 @@ def roll_image(image, diff, threshold=0.5):
         return image_shift
     else:
         return image
-
 
 def median_combiner(images):
     '''
@@ -515,7 +514,7 @@ def get_wcs(results_tbl):
             an image header with the RA and DEC included
     '''
     ast = AstrometryNet()
-    ast.api_key = 'elamxvaiboqqjucf'
+    ast.api_key = 'XXXXXXXX'
     image_width = 4096
     image_height = 4096
     wcs_header = ast.solve_from_source_list(results_tbl['x'][:30], results_tbl['y'][:30],
