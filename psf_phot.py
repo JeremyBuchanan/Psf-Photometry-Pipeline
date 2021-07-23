@@ -87,6 +87,7 @@ def pipeline(fn_path, fits_path, res_path):
                         pp.savefig()
                         plt.close()
                     pp.close()
+                    continue
 
                 else:
                     image = median_image

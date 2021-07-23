@@ -101,9 +101,12 @@ def find_fwhm(image, size=100):
             xdata = np.vstack((X.ravel(), Y.ravel()))
             ydata = star.ravel()
             p = [size, size, 3, 3, 10000, median_val]
-            popt, pcov = curve_fit(f=gaussian, xdata=xdata, ydata=ydata, p0=p)
-            im_sig = np.mean(popt[2:4])
-            fwhm = im_sig*gaussian_sigma_to_fwhm
+            try:
+                popt, pcov = curve_fit(f=gaussian, xdata=xdata, ydata=ydata, p0=p)
+                im_sig = np.mean(popt[2:4])
+                fwhm = im_sig*gaussian_sigma_to_fwhm
+            except:
+                fwhm = 0
             if fwhm > 2:
                 break
             else:
@@ -521,7 +524,6 @@ def get_wcs(results_tbl):
                                             image_width, image_height, solve_timeout=600)
     w = WCS(wcs_header)
     sky = w.pixel_to_world(results_tbl['x'], results_tbl['y'])
-
     return sky, wcs_header
 
 def write_fits(fn, data, im_headers, wcs_header):
