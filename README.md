@@ -1,11 +1,6 @@
 This is a pipeline for reducing raw imaging data using point spread function
-<<<<<<< HEAD
 photometry. This pipeline has until now been used to reduce multi-color
 photometry data from the Las Cumbres Observatory Global Telescope (LCOGT).
-=======
-photometry. This pipeline has until now been used to reduce data from the Los
-Cumbras Observatory Global Telescope (LCOGT).
->>>>>>> 48510395289ba6f5538316af7f3d7c4ab5c912ff
 
 # Setup
 
