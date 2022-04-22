@@ -63,6 +63,8 @@ def pipeline(fn_path, fits_path, res_path):
                     continue
                 else:
                     image = median_image
+            else:
+                image = im_data[0]
             mean_val, median_val, std_val = sigma_clipped_stats(image, sigma=2.0)
             image -= median_val
             stars_tbl = Table()

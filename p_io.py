@@ -5,7 +5,7 @@ import numpy as np
 import obj_data as od
 import saphires as saph
 from astropy.time import Time
-from astropy.visualization import ZScaleInterval, SqrtStretch, ImageNormalize
+from astropy.visualization import ZScaleInterval, SqrtStretch, ImageNormalize, simple_norm
 from matplotlib.backends.backend_pdf import PdfPages
 
 ra = od.ra
@@ -81,9 +81,9 @@ def write_pdf(name, images, model=None, final_stars=None, residual_stars=None, f
         plt.close()
     if final_stars is not None:
         if plot_res == 'y':
-            nrows = len(final_stars)
+            nrows = 50
             ncols = 2
-            fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 800), squeeze=True)
+            fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(10, 500), squeeze=True)
             ax = ax.ravel()
             index = 0
             for i in range(0, nrows*ncols, 2):
